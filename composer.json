@@ -13,7 +13,12 @@
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/framework": "^8.12",
-        "laravel/tinker": "^2.5"
+        "laravel/jetstream": "^2.1",
+        "laravel/sanctum": "^2.6",
+        "laravel/socialite": "^5.1",
+        "laravel/tinker": "^2.5",
+        "laravel/ui": "^3.2",
+        "livewire/livewire": "^2.0"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
@@ -38,7 +43,12 @@
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
-        }
+        },
+        "files": [
+            "app/Http/Lib/phpQuery-onefile.php"
+        ]
+
+        
     },
     "autoload-dev": {
         "psr-4": {
