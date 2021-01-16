@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use Auth;
 use App\Models\UserContent;
 use App\Models\SubscContent;
-// use App\Lib\phpQuery;
+use DOMWrap\Document;
+use GuzzleHttp\Client;
 
 
 use Illuminate\Http\Request;
@@ -35,12 +36,25 @@ class UserContentController extends Controller
             // var_dump($subscContent[0]->contentLocalId); //debug
             $url = $netflixUrl . $subscContent[0]->contentLocalId;
             // var_dump(\phpQuery::newDocument($html)->find(".episode-title")); //debug
+            // $dom = \phpQuery::newDocumentFile($url);
+            
+            $client = new \GuzzleHttp\Client();
+            $response = $client->request(
+                'GET',
+                $url,// URLを設定
+            );
 
-            $dom = \phpQuery::newDocumentFile($url);
+            $html = (string) $response->getBody();
+            $doc = new \DOMWrap\Document;
+            $node = $doc->html($html);
 
-            $contentNum = count($dom->find('.episode-title')); // エピソード数をカウント
+            $contentNum = count($node->find('.episode-title')); // エピソード数をカウント
             $lstContentNum = $contentNum -1; // 最新エピソードのインデックスを計算
-            $latestContent =  $dom->find(".episode-title:eq($lstContentNum)")->text(); // 最新エピソードのタイトルを取得
+            $latestContent =  $node->find('.episode-title')->eq(63)->text(); // 最新エピソードのタイトルを取得
+
+            // $contentNum = count($dom->find('.episode-title')); // エピソード数をカウント
+            // $lstContentNum = $contentNum -1; // 最新エピソードのインデックスを計算
+            // $latestContent =  $dom->find(".episode-title:eq($lstContentNum)")->text(); // 最新エピソードのタイトルを取得
 
             // var_dump($lastContent); //debug
 
@@ -50,8 +64,8 @@ class UserContentController extends Controller
                 $userContent->currentContent = $latestContent;
                 $userContent->watched = 0;
                 $userContent->save();
+
             }
-            // var_dump($userContent);
             
         }
 
