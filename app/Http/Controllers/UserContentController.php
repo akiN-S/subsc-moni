@@ -38,15 +38,24 @@ class UserContentController extends Controller
             // var_dump(\phpQuery::newDocument($html)->find(".episode-title")); //debug
             // $dom = \phpQuery::newDocumentFile($url);
             
-            $client = new \GuzzleHttp\Client();
-            $response = $client->request(
-                'GET',
-                $url,// URLを設定
-            );
+            $conn = \curl_init(); // cURLセッションの初期化
+            \curl_setopt($conn, CURLOPT_URL, $url); //　取得するURLを指定
+            \curl_setopt($conn, CURLOPT_RETURNTRANSFER, true); // 実行結果を文字列で返す。
+            $res =  \curl_exec($conn);
+            \curl_close($conn); //セッションの終了
 
-            $html = (string) $response->getBody();
             $doc = new \DOMWrap\Document;
-            $node = $doc->html($html);
+            $node = $doc->html($res);
+
+            // $client = new \GuzzleHttp\Client();
+            // $response = $client->request(
+            //     'GET',
+            //     $url,// URLを設定
+            // );
+
+            // $html = (string) $response->getBody();
+            // $doc = new \DOMWrap\Document;
+            // $node = $doc->html($html);
 
             $contentNum = count($node->find('.episode-title')); // エピソード数をカウント
             $lstContentNum = $contentNum -1; // 最新エピソードのインデックスを計算
@@ -56,7 +65,7 @@ class UserContentController extends Controller
             // $lstContentNum = $contentNum -1; // 最新エピソードのインデックスを計算
             // $latestContent =  $dom->find(".episode-title:eq($lstContentNum)")->text(); // 最新エピソードのタイトルを取得
 
-            // var_dump($lastContent); //debug
+            // var_dump($latestContent); //debug
 
             if($userContent->lastContent != $latestContent){
                 // var_dump("new!");
